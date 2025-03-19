@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/backend"; // Asegúrate de que la URL sea correcta
+const API_URL = "http://localhost:80/backend"; // Asegúrate de que la URL sea correcta
 
 const UserManagement = () => {
     const [usuarios, setUsuarios] = useState([]);
