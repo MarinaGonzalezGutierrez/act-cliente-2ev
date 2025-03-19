@@ -13,7 +13,11 @@ const UserManagement = () => {
 
     // Cargar los usuarios al cargar el componente
     useEffect(() => {
-        axios.get(`${API_URL}/usuarios.php`)  // Asegúrate de que esta URL sea la correcta para el GET
+        obtenerUsuarios();
+    }, []);
+
+    const obtenerUsuarios = () => {
+        axios.get(`${API_URL}/usuarios.php`)
             .then((response) => {
                 if (Array.isArray(response.data)) {
                     setUsuarios(response.data);
@@ -26,7 +30,7 @@ const UserManagement = () => {
                 console.error("Error al obtener usuarios:", error);
                 setUsuarios([]);  // Establecer como un array vacío en caso de error
             });
-    }, []);
+    };
 
     // Función para agregar un usuario
     const agregarUsuario = () => {
@@ -38,10 +42,7 @@ const UserManagement = () => {
         .then((response) => {
             if (response.data.success) {
                 alert("Usuario agregado correctamente");
-                // Crear un nuevo objeto usuario que se va a agregar al estado.
-                const nuevoUsuario = { nombre, apellido, fechaNac, username };
-                // Actualizar el estado con el nuevo usuario agregado
-                setUsuarios(prevUsuarios => [...prevUsuarios, nuevoUsuario]);
+                obtenerUsuarios(); // Recargar la lista de usuarios después de agregar uno nuevo
             } else {
                 alert("Error al agregar usuario: " + response.data.error);
             }
@@ -49,6 +50,55 @@ const UserManagement = () => {
         .catch((error) => {
             console.error("Error al agregar usuario:", error);
             alert("Error al agregar usuario. Revisa la consola.");
+        });
+    };
+
+    // Función para eliminar un usuario
+    const eliminarUsuario = (idUsuario) => {
+        if (!window.confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
+            return;
+        }
+    
+        axios.delete(`${API_URL}/eliminar_usuario.php`, {
+            data: JSON.stringify({ idUsuario }),  // 🔹 Enviar datos como JSON
+            headers: { "Content-Type": "application/json" } // 🔹 Importante para que PHP lo interprete bien
+        })
+        .then((response) => {
+            if (response.data.success) {
+                alert("Usuario eliminado correctamente");
+                obtenerUsuarios(); // Recargar la lista después de eliminar un usuario
+            } else {
+                alert("Error al eliminar usuario: " + response.data.error);
+            }
+        })
+        .catch((error) => {
+            console.error("Error al eliminar usuario:", error);
+            alert("No se pudo eliminar el usuario.");
+        });
+    };
+
+    // Función para modificar un usuario
+    const modificarUsuario = (username, nuevosDatos) => {
+        axios.put(`${API_URL}/modificar_usuario.php`, {
+            username,
+            nombre: nuevosDatos.nombre,
+            apellido: nuevosDatos.apellido,
+            fechaNac: nuevosDatos.fechaNac,
+            password: nuevosDatos.password || undefined // No se envía si está vacío
+        }, {
+            headers: { "Content-Type": "application/json" }
+        })
+        .then((response) => {
+            if (response.data.success) {
+                alert("Usuario actualizado correctamente");
+                obtenerUsuarios(); // Recargar la lista después de modificar
+            } else {
+                alert("Error al actualizar usuario: " + response.data.error);
+            }
+        })
+        .catch((error) => {
+            console.error("Error al actualizar usuario:", error);
+            alert("No se pudo actualizar el usuario.");
         });
     };
 
@@ -94,16 +144,33 @@ const UserManagement = () => {
                         <th>Apellido</th>
                         <th>Fecha Nacimiento</th>
                         <th>Username</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {/* Mostrar los usuarios */}
-                    {Array.isArray(usuarios) && usuarios.map((user, index) => (
-                        <tr key={index}>
+                    {Array.isArray(usuarios) && usuarios.map((user) => (
+                        <tr key={user.idUsuario}>
                             <td>{user.nombre}</td>
                             <td>{user.apellido}</td>
                             <td>{user.fechaNac}</td>
                             <td>{user.username}</td>
+                            <td>
+                                <button onClick={() => eliminarUsuario(user.idUsuario)}>
+                                    Eliminar
+                                </button>
+                                <button onClick={() => {
+                                    const nuevosDatos = {
+                                        nombre: prompt("Nuevo nombre:", user.nombre),
+                                        apellido: prompt("Nuevo apellido:", user.apellido),
+                                        fechaNac: prompt("Nueva fecha de nacimiento (YYYY-MM-DD):", user.fechaNac),
+                                        password: prompt("Nueva contraseña (déjalo vacío si no quieres cambiarlo):")
+                                    };
+                                    modificarUsuario(user.username, nuevosDatos);
+                                }}>
+                                    Editar
+                                </button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
