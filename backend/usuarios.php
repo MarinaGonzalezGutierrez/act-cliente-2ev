@@ -5,7 +5,7 @@ header("Content-Type: application/json");
 // Verificar si la solicitud es GET
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     // Consulta para obtener todos los usuarios
-    $sql = "SELECT id, nombre, apellido, fechaNac, username FROM usuario";
+    $sql = "SELECT idUsuario, nombre, apellido, fechaNac, username FROM usuario";
     $result = $conn->query($sql);
 
     // Verificar si hay usuarios
@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Ejecutar la consulta
     if ($stmt->execute()) {
         // Recuperar todos los usuarios después de la inserción
-        $sql_select = "SELECT id, nombre, apellido, fechaNac, username FROM usuario";
+        $sql_select = "SELECT idUsuario, nombre, apellido, fechaNac, username FROM usuario";
         $result = $conn->query($sql_select);
 
         // Verificar si hay usuarios
