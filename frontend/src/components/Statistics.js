@@ -5,7 +5,9 @@ import { Bar, Line } from "react-chartjs-2";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
-const API_URL = "http://localhost/backend/estadisticas.php";
+
+
+const API_URL = "http://localhost:80/backend/estadisticas.php";
 
 const Statistics = () => {
     const [estadisticas, setEstadisticas] = useState({ promedio: 0, minimo: 0, maximo: 0 });
