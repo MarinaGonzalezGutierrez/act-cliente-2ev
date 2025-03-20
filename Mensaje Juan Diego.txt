@@ -1,0 +1,3 @@
+Buenos días Juan Diego. Para cuando vayas a corregir esta práctica, a parte de tener la carpeta backend aquí hay que 
+copiarla en el htdocs del Xampp para que funcione. Y dependiendo los puertos que tengas también hay que cambiarlos ya que los tengo puestos 
+según la configuración que tengo en casa.
